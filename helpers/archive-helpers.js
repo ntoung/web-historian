@@ -25,17 +25,59 @@ exports.initialize = function(pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function() {
+exports.readListOfUrls = function(cb) {
+  console.log('archive-helpers:readListOfUrls');
+
+  fs.readFile(this.paths.list, 'utf-8', (err, fd) => {
+    console.log('\treadListOfUrls: reading file');
+    if (err) {
+      console.err('nothing found at url: ' + url);
+    } else {
+      // create an array of urls
+      cb(fd.split('\n'));
+    }
+
+    // close file after reading
+    fd.close();
+  });
 };
 
-exports.isUrlInList = function() {
+exports.isUrlInList = function(url) {
+  console.log('archive-helpers:isUrlInList');
+
+  return this.readListOfUrls(function(urls) {
+    console.log('URLS' + urls);
+    console.log('isUrlInList: ' + _.contains(urls, url));
+    return _.contains(urls, url);
+  });
+  
+
+  // fs.readFile(this.paths.list, 'utf-8', (err, fd) => {
+    
+
+  //   // check to see if url is contained in the list of urls
+  //   var inList = _.contains(fd.split('\n'), url);
+    
+  //   // close file after reading
+  //   fd.close();
+
+  //   return inList;
+  // });
+
+  console.log('\tpaths.list: ' + this.paths.list);
 };
+
 
 exports.addUrlToList = function() {
+  console.log('archive-helpers:addUrlToList');
+  console.log(this.paths);
+  // fs.write()
 };
 
 exports.isUrlArchived = function() {
+  console.log('archive-helpers:isUrlArchived');
 };
 
 exports.downloadUrls = function() {
+  console.log('archive-helpers:downloadUrls');
 };
