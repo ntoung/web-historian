@@ -12,7 +12,8 @@ var _ = require('underscore');
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
-  list: path.join(__dirname, '../archives/sites.txt')
+  list: path.join(__dirname, '../archives/sites.txt'),
+  index: path.join(__dirname, '../web/public/index.html')
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -35,36 +36,20 @@ exports.readListOfUrls = function(cb) {
     } else {
       // create an array of urls
       cb(fd.split('\n'));
+
     }
 
-    // close file after reading
-    fd.close();
+    // fd.close();
   });
 };
 
 exports.isUrlInList = function(url) {
   console.log('archive-helpers:isUrlInList');
+  console.log('url:' + url);
 
   return this.readListOfUrls(function(urls) {
-    console.log('URLS' + urls);
-    console.log('isUrlInList: ' + _.contains(urls, url));
     return _.contains(urls, url);
   });
-  
-
-  // fs.readFile(this.paths.list, 'utf-8', (err, fd) => {
-    
-
-  //   // check to see if url is contained in the list of urls
-  //   var inList = _.contains(fd.split('\n'), url);
-    
-  //   // close file after reading
-  //   fd.close();
-
-  //   return inList;
-  // });
-
-  console.log('\tpaths.list: ' + this.paths.list);
 };
 
 
@@ -78,6 +63,7 @@ exports.isUrlArchived = function() {
   console.log('archive-helpers:isUrlArchived');
 };
 
+// return archived url
 exports.downloadUrls = function() {
   console.log('archive-helpers:downloadUrls');
 };
