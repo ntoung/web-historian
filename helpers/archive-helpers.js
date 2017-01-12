@@ -30,37 +30,37 @@ exports.readListOfUrls = function(cb) {
   console.log('archive-helpers:readListOfUrls');
 
   fs.readFile(this.paths.list, 'utf-8', (err, fd) => {
-    console.log('\treadListOfUrls: reading file');
-    if (err) {
-      console.err('nothing found at url: ' + url);
-    } else {
-      // create an array of urls
-      cb(fd.split('\n'));
-
-    }
-
-    // fd.close();
+    err ? console.err('nothing found at url: ' + url) : cb(err, fd.split('\n'));
   });
 };
 
-exports.isUrlInList = function(url) {
+exports.isUrlInList = function(url, cb) {
   console.log('archive-helpers:isUrlInList');
   console.log('url:' + url);
 
-  return this.readListOfUrls(function(urls) {
-    return _.contains(urls, url);
+  return this.readListOfUrls(function(err, urls) {
+    err ? console.error('could not find url in list') : cb(err, _.contains(urls, url));
   });
 };
 
 
-exports.addUrlToList = function() {
+exports.addUrlToList = function(url, cb) {
   console.log('archive-helpers:addUrlToList');
   console.log(this.paths);
-  // fs.write()
+
+  fs.appendFile(this.paths.list, url + '\n', (err) => {
+    err ? console.error('could not add url to list') : cb(err);
+  });
+
 };
 
-exports.isUrlArchived = function() {
+exports.isUrlArchived = function(url, cb) {
   console.log('archive-helpers:isUrlArchived');
+  console.log(this.paths.archivedSites + url);
+
+  fs.stat(this.paths.archivedSites + '/' + url, (err) => {
+    err ? cb(null, false) : cb(null, true);
+  });
 };
 
 // return archived url
