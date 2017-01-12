@@ -2,6 +2,7 @@ var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var http = require('./http-helpers');
 var fs = require('fs');
+var _ = require('underscore');
 // require more modules/folders here!
 
 //ADDING TO GLOBAL SCOPE, SHOULD REQUIRE IT
@@ -40,30 +41,45 @@ exports.handleRequest = function (req, res) {
   if (method === 'GET') {
     // serve index.html by default
     if (url === '/') {
-      // Modify header/status code
-
-      // serve assets will serve up html files and 
-      // http.serveAssets()
-
-      // fs.readFile('url', 'utf-8', (err, fd) => {
       fs.readFile(archive.paths.index, (err, fd) => {
         if (err) {
           console.log('Could not read file: ' + err);
         } else {
           console.log('Reading file');
-          // Write status code 200 and include default headers
+          // Abstract to Serve Assets
           res.writeHead(200, headers);
           res.write(fd);
-          // console.log(fd.toString());
           res.end();
         }
       });
-      //Hard code solution to first spec
-      // res.end('<input');
     } else {
-      // url: /arglebargle
-
-
+      var url = url.slice(1);   // changing URL here
+      // First check to see if the file client requests exists.
+      fs.readFile(archive.paths.list, (err, fd) => {
+        if (err) {
+          console.log('you messed up ' + err);
+        } else {
+          console.log('reading archive list');
+          console.log(fd.toString());
+          // sites.txt contains the URL, so the file client is asking for exists.
+          if (_.contains(fd.toString().split('\n'), url)) {
+            fs.readFile(archive.paths.archivedSites + '/' + url, (err, fd) => {
+              if (err) {
+                console.log('Could not read file: ' + err);
+              } else {
+                // Serve Assets
+                res.writeHead(200, headers);
+                res.write(fd);
+                res.end();
+              }
+            });
+          } else {
+            // sites.txt does NOT contain the URL, so no file exits. Serve Error.
+            res.writeHead(404, headers);
+            res.end();
+          }
+        }
+      });
 
 
       // read sites.text with cb
@@ -75,51 +91,36 @@ exports.handleRequest = function (req, res) {
 
 
 
+      // console.log(url);
+      // // /www.google.com
 
-      //Serve Assets
+      // // remove '/'' prefix
+      // var url = url.slice(1);
 
-
-
-
-
-
-      console.log(url);
-      // /www.google.com
-
-      // remove '/'' prefix
-      var url = url.slice(1);
-
-      // if '/www.google.com' is in sites.txt
-      if (archive.isUrlInList(url)) {
-        // go to sites folder, read and res/write 
-        console.log('YOYOYO');
-        console.log(archive.paths.archivedSites + '/' + url);
-        fs.readFile(archive.paths.archivedSites + '/' + url, (err, fd) => {
-          if (err) {
-            console.log('Could not read file: ' + err);
-          } else {
-            // Write status code 200 and include default headers
-            res.writeHead(200, headers);
-            res.write(fd);
-            // console.log(fd.toString());
-            res.end();
-          }
-        });
-      }
-
-      
-
-        
-
-
+      // // if '/www.google.com' is in sites.txt
+      // if (archive.isUrlInList(url)) {
+      //   // go to sites folder, read and res/write 
+      //   console.log('YOYOYO');
+      //   console.log(archive.paths.archivedSites + '/' + url);
+      //   fs.readFile(archive.paths.archivedSites + '/' + url, (err, fd) => {
+      //     if (err) {
+      //       console.log('Could not read file: ' + err);
+      //     } else {
+      //       // Write status code 200 and include default headers
+      //       res.writeHead(200, headers);
+      //       res.write(fd);
+      //       // console.log(fd.toString());
+      //       res.end();
+      //     }
+      //   });
+      // }
 
     }
-    // res.writeHead(404, headers);
-    // res.end();
-    console.log(archive.paths.index);
+  } else if (method === 'POST') {
+
+
   }
 
-  
 
   // res.end(archive.paths.list);
 };
