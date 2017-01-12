@@ -17,7 +17,7 @@ var request = supertest.agent(server);
 
 describe('server', function() {
   describe('GET /', function () {
-    xit('should return the content of index.html', function (done) {
+    it('should return the content of index.html', function (done) {
       // just assume that if it contains an <input> tag its index.html
       request
         .get('/')
@@ -27,7 +27,7 @@ describe('server', function() {
 
   describe('archived websites', function () {
     describe('GET', function () {
-      xit('should return the content of a website from the archive', function (done) {
+      it('should return the content of a website from the archive', function (done) {
         var fixtureName = 'www.google.com';
         var fixturePath = archive.paths.archivedSites + '/' + fixtureName;
 
@@ -53,7 +53,7 @@ describe('server', function() {
     });
 
     describe('POST', function () {
-      xit('should append submitted sites to \'sites.txt\'', function(done) {
+      it('should append submitted sites to \'sites.txt\'', function(done) {
         var url = 'www.example.com';
 
         // Reset the test file and process request
@@ -174,7 +174,7 @@ describe('archive helpers', function() {
   });
 
   describe('#downloadUrls', function () {
-    xit('should download all pending urls in the list', function (done) {
+    it('should download all pending urls in the list', function (done) {
       var urlArray = ['www.example.com', 'www.google.com'];
       archive.downloadUrls(urlArray);
 

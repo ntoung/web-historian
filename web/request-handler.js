@@ -16,7 +16,7 @@ var headers = {
 
 exports.handleRequest = function (req, res) {
   
-  console.log('handling ' + req.method + ' request');
+  //console.log('handling ' + req.method + ' request');
 
   var method = req.method;
   var url = req.url;
@@ -45,7 +45,7 @@ exports.handleRequest = function (req, res) {
         if (err) {
           console.log('Could not read file: ' + err);
         } else {
-          console.log('Reading file');
+          // console.log('Reading file');
           // Abstract to Serve Assets
           res.writeHead(200, headers);
           res.write(fd);
@@ -82,7 +82,7 @@ exports.handleRequest = function (req, res) {
         if (err) {
           console.error('Could not append data');  
         } else {
-          console.log('Appended data');
+          // console.log('Appended data');
 
           res.writeHead(302, headers);
           res.end();
