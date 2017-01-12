@@ -54,71 +54,41 @@ exports.handleRequest = function (req, res) {
       });
     } else {
       var url = url.slice(1);   // changing URL here
-      // First check to see if the file client requests exists.
-      fs.readFile(archive.paths.list, (err, fd) => {
+      
+      fs.readFile(archive.paths.archivedSites + '/' + url, (err, fd) => {
         if (err) {
-          console.log('you messed up ' + err);
+          console.log('Could not read file: ' + err);
+          res.writeHead(404, headers);
+          res.end();
         } else {
-          console.log('reading archive list');
-          console.log(fd.toString());
-          // sites.txt contains the URL, so the file client is asking for exists.
-          if (_.contains(fd.toString().split('\n'), url)) {
-            fs.readFile(archive.paths.archivedSites + '/' + url, (err, fd) => {
-              if (err) {
-                console.log('Could not read file: ' + err);
-              } else {
-                // Serve Assets
-                res.writeHead(200, headers);
-                res.write(fd);
-                res.end();
-              }
-            });
-          } else {
-            // sites.txt does NOT contain the URL, so no file exits. Serve Error.
-            res.writeHead(404, headers);
-            res.end();
-          }
+          // Serve Assets
+          res.writeHead(200, headers);
+          res.write(fd);
+          res.end();
         }
       });
-
-
-      // read sites.text with cb
-      // archive.
-
-      // cb = if doesn't include, throw 404.
-      //       if includes, read sites/url with cb2,
-      //          cb2 = serve contents. 
-
-
-
-      // console.log(url);
-      // // /www.google.com
-
-      // // remove '/'' prefix
-      // var url = url.slice(1);
-
-      // // if '/www.google.com' is in sites.txt
-      // if (archive.isUrlInList(url)) {
-      //   // go to sites folder, read and res/write 
-      //   console.log('YOYOYO');
-      //   console.log(archive.paths.archivedSites + '/' + url);
-      //   fs.readFile(archive.paths.archivedSites + '/' + url, (err, fd) => {
-      //     if (err) {
-      //       console.log('Could not read file: ' + err);
-      //     } else {
-      //       // Write status code 200 and include default headers
-      //       res.writeHead(200, headers);
-      //       res.write(fd);
-      //       // console.log(fd.toString());
-      //       res.end();
-      //     }
-      //   });
-      // }
-
     }
   } else if (method === 'POST') {
+   
+    var body = [];
+    req.on('data', function(chunk) {
+      body.push(chunk);
+    }).on('end', function() {
+      body = Buffer.concat(body).toString();
+      
+      var url = body.split('=')[1];
 
+      fs.appendFile(archive.paths.list, url + '\n', (err) => {
+        if (err) {
+          console.error('Could not append data');  
+        } else {
+          console.log('Appended data');
 
+          res.writeHead(302, headers);
+          res.end();
+        }
+      });
+    });
   }
 
 
