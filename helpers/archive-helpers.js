@@ -59,7 +59,7 @@ exports.isUrlArchived = function(url, cb) {
   // console.log(this.paths.archivedSites + url);
 
   fs.stat(this.paths.archivedSites + '/' + url, (err) => {
-    err ? cb(null, false) : cb(null, true);
+    err ? cb(false) : cb(true);
   });
 };
 
