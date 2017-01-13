@@ -38,7 +38,7 @@ exports.isUrlInList = function(url, cb) {
   // console.log('archive-helpers:isUrlInList');
   // console.log('url:' + url);
 
-  return this.readListOfUrls(function(err, urls) {
+  return exports.readListOfUrls(function(err, urls) {
     err ? console.error('could not find url in list') : cb(err, _.contains(urls, url));
   });
 };
@@ -59,7 +59,7 @@ exports.isUrlArchived = function(url, cb) {
   // console.log(this.paths.archivedSites + url);
 
   fs.stat(this.paths.archivedSites + '/' + url, (err) => {
-    err ? cb(false) : cb(true);
+    err ? cb(null, false) : cb(null, true);
   });
 };
 
